@@ -1,0 +1,15 @@
+candump output for steering wheel controls
+
+
+down   can0  00404066   [8]  40 00 00 07 1F 40 44 7F
+up     can0  00404066   [8]  40 00 00 07 1F 40 48 7F
+left   can0  00404066   [8]  C0 00 00 05 1F 40 41 7F
+right  can0  00404066   [8]  C0 00 00 01 1F 40 42 7F
+back   can0  00404066   [8]  80 00 00 04 1F 40 50 7F
+enter  can0  00404066   [8]  C0 00 00 05 1F 40 60 7F
+ph-yes can0  00404066   [8]  C0 00 00 05 1F 40 40 6F
+ph-no  can0  00404066   [8]  00 00 00 06 1F 40 40 5F
+next   can0  00404066   [8]  80 00 00 04 1F 40 40 7D
+prev   can0  00404066   [8]  00 00 00 02 1F 40 40 7E
+vol+   can0  00404066   [8]  C0 00 00 01 1F 40 40 77
+vol-   can0  00404066   [8]  80 00 00 04 1F 40 40 7B
