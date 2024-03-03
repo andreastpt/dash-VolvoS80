@@ -17,19 +17,15 @@ class DebugWindow : public QWidget {
     public:
         DebugWindow(Arbiter &arbiter, QWidget *parent = nullptr);
 };
-class VolvoS80 : public QObject
+class VolvoS80 : public QObject, VehiclePlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID VehiclePlugin_iid)
     Q_INTERFACES(VehiclePlugin)
     public:
-        VolvoS80() {
-            this->arbiter = nullptr;
-            this->aa_handler = nullptr;
-            this->debug = nullptr;
-        };
+        VolvoS80() {};
         ~VolvoS80();
-        bool init(ICANBus* canbus);
+        bool init(ICANBus* canbus) override;
     private:
         void controlls(QByteArray payload);
         AAHandler *aa_handler;
