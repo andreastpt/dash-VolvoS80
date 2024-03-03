@@ -20,6 +20,8 @@ class DebugWindow : public QWidget {
 class VolvoS80 : public QObject
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID VehiclePlugin_iid)
+    Q_INTERFACES(VehiclePlugin)
     public:
         VolvoS80() {
             this->arbiter = nullptr;
