@@ -14,9 +14,6 @@ bool VolvoS80::init(ICANBus* canbus)
         this->vehicle->disable_sensors();
         this->vehicle->rotate(270);
 
-        if(DEBUG)
-            this->debug = new DebugWindow(*this->arbiter);
-
         canbus->registerFrameHandler(0x404066, [this](QByteArray payload){this->controlls(payload);});
         S80_LOG(info)<<"loaded successfully";
         return true;
@@ -32,37 +29,68 @@ QList<QWidget *> VolvoS80::widgets()
     tabs.append(this->vehicle);
     return tabs;
 }
-
 void VolvoS80::controlls(QByteArray payload){
-    if(payload.at(1) & 0b1000 != 0){
+    if (DEBUG) {
+        S80_LOG(info) << "Payload received: " << payload.toHex().toStdString();
+    }
+    if(payload.at(6) == 0x48){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::UP);
+	    if (DEBUG) {
+		S80_LOG(info) << "UP Pressed";
+	    }
     }
-    if(payload.at(1) & 0b0100 != 0){
+    else if(payload.at(6) == 0x44){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::DOWN);
+	if (DEBUG) {
+		S80_LOG(info) << "DOWN Pressed";
+	}
     }
-    if(payload.at(1) & 0b0001 != 0){
+    else if(payload.at(6) == 0x41){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::LEFT);
+        if (DEBUG) {
+		S80_LOG(info) << "LEFT Pressed";
+	}
     }
-    if(payload.at(1) & 0b0010 != 0){
+    else if(payload.at(6) == 0x42){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::RIGHT);
+        if (DEBUG) {
+		S80_LOG(info) << "RIGHT Pressed";
+	}
     }
-    if(payload.at(1) & 0b10000 != 0){
+    else if(payload.at(6) == 0x50){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::BACK);
+        if (DEBUG) {
+		S80_LOG(info) << "BACK Pressed";
+	}
     }
-    if(payload.at(1) & 0b100000 != 0){
+    else if(payload.at(6) == 0x60){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::ENTER);
+        if (DEBUG) {
+		S80_LOG(info) << "ENTER Pressed";
+	}
     }
-    if(payload.at(0) & 0b10000 == 0){
+    else if(payload.at(7) == 0x6F){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::TOGGLE_PLAY);
+        if (DEBUG) {
+		S80_LOG(info) << "PLAY/PAUSE Pressed";
+	}
     }
-    if(payload.at(0 )& 0b100000 == 0){
+    else if(payload.at(7) == 0x5F){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::CALL_END);
+        if (DEBUG) {
+		S80_LOG(info) << "CALL_END Pressed";
+	}
     }
-    if(payload.at(0) & 0b0010 == 0){
+    else if(payload.at(7) == 0x7D){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::NEXT);
+        if (DEBUG) {
+		S80_LOG(info) << "NEXT Pressed";
+	}
     }
-    if(payload.at(0) & 0b0001 == 0){
+    else if(payload.at(7) == 0x7E){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::PREV);
+        if (DEBUG) {
+		S80_LOG(info) << "PREV Pressed";
+	}
     }
 }
-bool oldStatus = true;

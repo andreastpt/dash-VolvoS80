@@ -1,8 +1,7 @@
 candump output for steering wheel controls
 
-
-down   can0  00404066   [8]  40 00 00 07 1F 40 44 7F
 up     can0  00404066   [8]  40 00 00 07 1F 40 48 7F
+down   can0  00404066   [8]  40 00 00 07 1F 40 44 7F
 left   can0  00404066   [8]  C0 00 00 05 1F 40 41 7F
 right  can0  00404066   [8]  C0 00 00 01 1F 40 42 7F
 back   can0  00404066   [8]  80 00 00 04 1F 40 50 7F
