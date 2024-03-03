@@ -26,9 +26,10 @@ class VolvoS80 : public QObject, VehiclePlugin
         VolvoS80() {};
         ~VolvoS80();
         bool init(ICANBus* canbus) override;
+        QList<QWidget *> widgets() override;
     private:
         void controlls(QByteArray payload);
         AAHandler *aa_handler;
+        Vehicle *vehicle;
         DebugWindow *debug;
-        Arbiter* arbiter;
 };
