@@ -8,15 +8,14 @@ Current functionality:
 
 TODO:
 
-* Update light status and doors on the vehicle page
-* Add button page for fuel door, trunk and whatever comes to mind
+* Update lights, doors and windows on the vehicle page
 * Change canbus id-s for gauges and exchange speed for boost
+* Add button page for fuel door, trunk and whatever comes to mind
 * Add automatic switching to reverse camera when reverse gear is engaged
 * Integrate parking sensors
 * Webasto heater control
 * Add wheel button combos (for example pressing cruise control- and vol- changes the page in Dash)
 * Send diag enable packets to enable the opening of windows, trunk, etc from dash
-
 
 Layout (currently they only interface with the Android Auto Page):
 
@@ -25,7 +24,6 @@ Layout (currently they only interface with the Android Auto Page):
 * NEXT and PREV - NEXT and PREV
 * Call accept - PLAY/PAUSE
 * Call deny - Call deny
-
 
 This repo also contains a .txt file with the candump output of different canbus buttons.
 
