@@ -12,3 +12,60 @@ next   can0  00404066   [8]  80 00 00 04 1F 40 40 7D
 prev   can0  00404066   [8]  00 00 00 02 1F 40 40 7E
 vol+   can0  00404066   [8]  C0 00 00 01 1F 40 40 77
 vol-   can0  00404066   [8]  80 00 00 04 1F 40 40 7B
+
+from: https://github.com/LuukEsselbrugge/Volve/blob/main/Volve/S60_02.cpp
+
+      //Diag activations for CEM
+      void diag1_tx(int byte6, int byte7){
+        uint8_t d[] = {0x8F, 0x40, 0xB1, 0x1A, 0x21, 0x01, byte6, byte7};
+        can_tx(0x0FFFFE, d);
+        uint8_t d1[] = {0x4E, 0x00, 0x00, byte6, byte7, 0x00, 0x00, 0x00};
+        can_tx(0x0FFFFE, d1);
+      
+        if(byte6 == 0 && byte7 == 0){
+          uint8_t d[] = {0xCD, 0x40, 0xB1, 0x1A, 0x21, 0x00, 0x00, 0x00};
+          can_tx(0x0FFFFE, d);
+        }
+      }
+      //Diag activations for Driver Door Module
+      void diag2_tx(int byte7){
+        //Enable power command
+        uint8_t d[] = {0xCE,0x43,0xB0,0x09,0x01,0x01,0x01,0x00};
+        can_tx(0x0FFFFE, d);
+        uint8_t d1[] = {0xCD,0x43,0xB0,0x10,0x01,0x03,0x00,byte7};
+        can_tx(0x0FFFFE, d1);
+      }
+      void sweep(){
+        uint8_t d[] = {0xCB, 0x51, 0xB2, 0x02, 0x00, 0x00, 0x00, 0x00};
+        can_tx(0x0FFFFE, d);
+      }
+
+      void gong_on(){
+        uint8_t d[] = {0xCE, 0x51, 0xB0, 0x0B, 0x01, 0xFF, 0x20, 0x00};
+        can_tx(0x0FFFFE, d);
+      }
+
+      void gong_off(){
+        uint8_t d[] = {0xCE, 0x51, 0xB0, 0x0B, 0x00, 0x00, 0x00, 0x00};
+        can_tx(0x0FFFFE, d);
+      }
+
+      void indicate_left(){
+        uint8_t d[] = {0xCE, 0x48, 0xB0, 0x05, 0x01, 0x03, 0x02, 0x00};
+        can_tx(0x0FFFFE, d);
+      }
+
+      void indicate_right(){
+        uint8_t d[] = {0xCE, 0x48, 0xB0, 0x05, 0x01, 0x03, 0x01, 0x00};
+        can_tx(0x0FFFFE, d);
+      }
+
+      void indicate_stop(){
+        uint8_t d[] = {0xCE, 0x48, 0xB0, 0x05, 0x00, 0x00, 0x00, 0x00};
+        can_tx(0x0FFFFE, d);
+      }
+      
+      void disablelcd(){
+        uint8_t d[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0b000100};
+        this->can_tx(0x0220200E, d);
+      }
