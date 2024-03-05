@@ -13,7 +13,10 @@ TODO:
 * Add button page for fuel door, trunk and whatever comes to mind
 * Add automatic switching to reverse camera when reverse gear is engaged
 * Integrate parking sensors
-* Webasto heater control
+* Integrate media buttons (seek and prev/next from the stock radio)
+* Discover possibilities with PHM (what codes does the phm keypad send out if any at all and how hard would it be to hijack its audio signal to use it as a phone with android auto)
+* Discover possibilities with the stock radio (display song progress, name and such on the screen)
+* Webasto heater control (preferably with a microcontroller to enable remote webasto controll over the internet while minimizing power usage but also integrating the control panel in dash)
 * Add wheel button combos (for example pressing cruise control- and vol- changes the page in Dash)
 * Send diag enable packets to enable the opening of windows, trunk, etc from dash
 
