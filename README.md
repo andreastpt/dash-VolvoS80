@@ -8,7 +8,7 @@ Current functionality:
 
 TODO:
 
-* Update lights, doors and windows on the vehicle page
+* Update lights and doors on the vehicle page
 * Change canbus id-s for gauges and exchange speed for boost
 * Add button page for fuel door, trunk and whatever comes to mind
 * Add automatic switching to reverse camera when reverse gear is engaged
