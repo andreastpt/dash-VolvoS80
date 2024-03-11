@@ -1,5 +1,6 @@
 #include <QString>
 #include <iostream>
+#include <QWidget>
 #include <stdlib.h>
 #include <QByteArray>
 #include <boost/log/trivial.hpp>
@@ -14,6 +15,8 @@
 class ActionsWindow : public QWidget {
     Q_OBJECT
 
+    private slots:
+        void OpenTrunk();
     public:
         ActionsWindow(Arbiter &arbiter, QWidget *parent = nullptr);
 };
@@ -33,5 +36,3 @@ class VolvoS80 : public QObject, VehiclePlugin
         Vehicle *vehicle;
         ActionsWindow *actions;
 };
-private slots:
-    void OpenTrunk();
