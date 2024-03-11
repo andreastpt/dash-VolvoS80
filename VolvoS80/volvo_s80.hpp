@@ -15,10 +15,10 @@
 class ActionsWindow : public QWidget {
     Q_OBJECT
 
-    private slots:
-        void OpenTrunk();
     public:
         ActionsWindow(Arbiter &arbiter, QWidget *parent = nullptr);
+    private:
+        void OpenTrunk();
 };
 class VolvoS80 : public QObject, VehiclePlugin
 {

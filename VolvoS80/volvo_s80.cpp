@@ -16,7 +16,7 @@ bool VolvoS80::init(ICANBus* canbus)
         this->vehicle->setObjectName("Volvo S80");
         this->vehicle->disable_sensors();
         this->vehicle->rotate(270);
-        this->actions = new Actions(*this->arbiter);
+        this->actions = new ActionsWindow(*this->arbiter);
         this->actions->setObjectName("Actions");
         canbus->registerFrameHandler(0x404066, [this](QByteArray payload){this->controlls(payload);});
         S80_LOG(info)<<"loaded successfully";
@@ -113,16 +113,16 @@ void VolvoS80::controlls(QByteArray payload){
 }
 ActionsWindow::ActionsWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
 {
-    QtpushButton *openTrunk = new QPushButton("Open Trunk");
+    QPushButton *openTrunk = new QPushButton("Open Trunk");
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(openTrunk);
-    connect(openTrunk, &QPushButton::clicked, this, SLOT(OpenTrunk()));   
+    connect(openTrunk, &QPushButton::clicked, this, &ActionsWindow::OpenTrunk);   
 }
 void ActionsWindow::OpenTrunk()
 {
     if (DEBUG) {
         S80_LOG(info) << "Opening Trunk";
     }
-    canbus->WriteFrame(QcanbusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204")));
-    canbus->WriteFrame(QcanbusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000")));
+    QCanBus(WriteFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204"))));
+    QCanBus(WriteFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000"))));
 }
