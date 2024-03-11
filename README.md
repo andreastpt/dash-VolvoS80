@@ -10,7 +10,7 @@ TODO:
 
 * Update lights, doors and windows on the vehicle page
 * Change canbus id-s for gauges and exchange speed for boost
-* Add button page for fuel door, trunk and whatever comes to mind
+* Add button page for fuel door, trunk and whatever comes to mind (TESTING branch for this)
 * Add automatic switching to reverse camera when reverse gear is engaged
 * Integrate parking sensors
 * Integrate media buttons (seek and prev/next from the stock radio)

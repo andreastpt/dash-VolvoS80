@@ -11,11 +11,11 @@
 
 #define S80_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[S80VehiclePlugin] "
 
-class DebugWindow : public QWidget {
+class ActionsWindow : public QWidget {
     Q_OBJECT
 
     public:
-        DebugWindow(Arbiter &arbiter, QWidget *parent = nullptr);
+        ActionsWindow(Arbiter &arbiter, QWidget *parent = nullptr);
 };
 class VolvoS80 : public QObject, VehiclePlugin
 {
@@ -31,5 +31,7 @@ class VolvoS80 : public QObject, VehiclePlugin
         void controlls(QByteArray payload);
         AAHandler *aa_handler;
         Vehicle *vehicle;
-        DebugWindow *debug;
+        ActionsWindow *actions;
 };
+private slots:
+    void OpenTrunk();
