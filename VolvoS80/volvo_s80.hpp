@@ -14,11 +14,8 @@
 
 class ActionsWindow : public QWidget {
     Q_OBJECT
-
     public:
         ActionsWindow(Arbiter &arbiter, QWidget *parent = nullptr);
-    private:
-        void OpenTrunk();
 };
 class VolvoS80 : public QObject, VehiclePlugin
 {
@@ -30,7 +27,10 @@ class VolvoS80 : public QObject, VehiclePlugin
         ~VolvoS80();
         bool init(ICANBus* canbus) override;
         QList<QWidget *> widgets() override;
+    public slots:
+        void OpenTrunk();
     private:
+        ICANBus* canbus;
         void controlls(QByteArray payload);
         AAHandler *aa_handler;
         Vehicle *vehicle;

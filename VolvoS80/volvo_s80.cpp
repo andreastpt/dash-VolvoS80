@@ -1,5 +1,5 @@
 #include "volvo_s80.hpp"
-#define DEBUG false
+#define DEBUG true
 #define PRINT_CAN_PAYLOADS false
 VolvoS80::~VolvoS80()
 {
@@ -19,6 +19,12 @@ bool VolvoS80::init(ICANBus* canbus)
         this->actions = new ActionsWindow(*this->arbiter);
         this->actions->setObjectName("Actions");
         canbus->registerFrameHandler(0x404066, [this](QByteArray payload){this->controlls(payload);});
+        QPushButton* openTrunkButton = this->actions->findChild<QPushButton*>("Open Trunk");
+        if (openTrunkButton) {
+            connect(openTrunkButton, &QPushButton::clicked, this, [this](){this->OpenTrunk();});
+        } else {
+            S80_LOG(error) << "Open Trunk button not found!";
+        }
         S80_LOG(info)<<"loaded successfully";
         return true;
     }
@@ -114,15 +120,15 @@ void VolvoS80::controlls(QByteArray payload){
 ActionsWindow::ActionsWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
 {
     QPushButton *openTrunk = new QPushButton("Open Trunk");
+    openTrunk->setObjectName("Open Trunk");
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(openTrunk);
-    connect(openTrunk, &QPushButton::clicked, this, &ActionsWindow::OpenTrunk);   
 }
-void ActionsWindow::OpenTrunk()
+void VolvoS80::OpenTrunk()
 {
     if (DEBUG) {
         S80_LOG(info) << "Opening Trunk";
     }
-    QCanBus(WriteFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204"))));
-    QCanBus(WriteFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000"))));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000")));
 }
