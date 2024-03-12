@@ -27,11 +27,13 @@ class VolvoS80 : public QObject, VehiclePlugin
         ~VolvoS80();
         bool init(ICANBus* canbus) override;
         QList<QWidget *> widgets() override;
+        int REVERSE = 0;
     private:
+        int REVERSE_TIMEOUT = 0;
         bool inReverse = false;
         ICANBus* canbus;
         void controlls(QByteArray payload);
-        void MonitorReverse(QbyteArray payload);
+        void MonitorReverse(QByteArray payload);
         void OpenTrunk();
         void OpenWindows();
         void CloseWindows();

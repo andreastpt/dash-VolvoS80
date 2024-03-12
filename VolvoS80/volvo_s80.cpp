@@ -1,6 +1,11 @@
 #include "volvo_s80.hpp"
 #define DEBUG true
 #define PRINT_CAN_PAYLOADS false
+#include <chrono>
+unsigned long millis() {
+    using namespace std::chrono;
+    return duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
+}
 VolvoS80::~VolvoS80()
 {
     if(this->vehicle)
@@ -191,7 +196,7 @@ void VolvoS80::MonitorReverse(QByteArray payload){
     }
     REVERSE = (payload.at(2) >> 5) & 1;
     if(REVERSE){
-        this->arbiter->set_curr_page(3);
+        this->arbiter->set_curr_page(2);
         REVERSE_TIMEOUT = millis() + 5000;
         if (DEBUG) {
 	        S80_LOG(info) << "in reverse";
