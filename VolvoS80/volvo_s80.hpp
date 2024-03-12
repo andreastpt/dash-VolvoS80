@@ -17,6 +17,17 @@ class ActionsWindow : public QWidget {
     public:
         ActionsWindow(Arbiter &arbiter, QWidget *parent = nullptr);
 };
+class InfoWindow : public QWidget {
+    Q_OBJECT
+    public:
+        InfoWindow(Arbiter &arbiter, QWidget *parent = nullptr);
+        QLabel* battStatus;
+        QLabel* fuelStatus;
+        QLabel* cabinTempStatus;
+        QLabel* speedStatus;
+        QLabel* rpmStatus;
+        QLabel* reverseStatus;
+};
 class VolvoS80 : public QObject, VehiclePlugin
 {
     Q_OBJECT
@@ -28,12 +39,14 @@ class VolvoS80 : public QObject, VehiclePlugin
         bool init(ICANBus* canbus) override;
         QList<QWidget *> widgets() override;
         int REVERSE = 0;
+        int RPM = 0;
     private:
         int REVERSE_TIMEOUT = 0;
         bool inReverse = false;
         ICANBus* canbus;
         void controlls(QByteArray payload);
         void MonitorReverse(QByteArray payload);
+        void MonitorRPM(QByteArray payload);
         void OpenTrunk();
         void OpenWindows();
         void CloseWindows();
@@ -41,4 +54,5 @@ class VolvoS80 : public QObject, VehiclePlugin
         AAHandler *aa_handler;
         Vehicle *vehicle;
         ActionsWindow *actions;
+        InfoWindow *info;
 };

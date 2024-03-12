@@ -13,12 +13,14 @@ VolvoS80::~VolvoS80()
         delete this->vehicle;
     if(this->actions)
         delete this->actions;
+    if(this->info)
+        delete this->info;
 }
 bool VolvoS80::init(ICANBus* canbus)
 {
     if (this->arbiter) {
         this->aa_handler = this->arbiter->android_auto().handler;
-        if (SHOW_VEHICLE_WIDGET == true){
+        if (SHOW_VEHICLE_WIDGET){
             this->vehicle = new Vehicle(*this->arbiter);
             this->vehicle->setObjectName("Volvo S80");
             this->vehicle->disable_sensors();
@@ -26,9 +28,12 @@ bool VolvoS80::init(ICANBus* canbus)
         }
         this->actions = new ActionsWindow(*this->arbiter);
         this->actions->setObjectName("Actions");
+        this->info = new InfoWindow(*this->arbiter);
+        this->info->setObjectName("Info");
         this->canbus = canbus;
         canbus->registerFrameHandler(0x404066, [this](QByteArray payload){this->controlls(payload);});
         canbus->registerFrameHandler(0x01213FFC, [this](QByteArray payload){this->MonitorReverse(payload);});
+        canbus->registerFrameHandler(0x02C13428, [this](QByteArray payload){this->MonitorRPM(payload);});
         QPushButton* openTrunkButton = this->actions->findChild<QPushButton*>("Open Trunk");
         if (openTrunkButton) {
             connect(openTrunkButton, &QPushButton::clicked, this, [this](){this->OpenTrunk();});
@@ -60,7 +65,17 @@ QList<QWidget *> VolvoS80::widgets()
         tabs.append(this->vehicle);
     }
     tabs.append(this->actions);
+    tabs.append(this->info);
     return tabs;
+}
+void VolvoS80::MonitorRPM(QByteArray payload){
+    if (DEBUG == true && PRINT_CAN_PAYLOADS == true) {
+        S80_LOG(info) << "Payload received RPM: " << payload.toHex().toStdString();
+    }
+    int A = payload.at(6);
+    A &= 0b1111;
+    RPM = A << 8 | payload.at(7);
+    this->info->rpmStatus->setText(QString::number(RPM));
 }
 void VolvoS80::controlls(QByteArray payload){
     static qint64 lastButtonPressTime = 0;
@@ -155,6 +170,42 @@ ActionsWindow::ActionsWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent
     layout->addWidget(closeWindows);
     layout->addWidget(sweep);
 }
+InfoWindow::InfoWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
+{
+    QLabel* vBatt = new QLabel("Battery Voltage", this);
+    QLabel* sFuel = new QLabel("Fuel", this);
+    QLabel* tCabin = new QLabel("Cabin Temp", this);
+    QLabel* vSpeed = new QLabel("Speed", this);
+    QLabel* RPM = new QLabel("RPM", this);
+    QLabel* inReverse = new QLabel("In Reverse", this);
+
+    battStatus = new QLabel("--", this);
+    fuelStatus = new QLabel("--", this);
+    cabinTempStatus = new QLabel("--", this);
+    speedStatus = new QLabel("--", this);
+    rpmStatus = new QLabel("--", this);
+    reverseStatus = new QLabel("--", this);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(vBatt);
+    layout->addWidget(battStatus);
+    layout->addWidget(Session::Forge::br(false));
+    layout->addWidget(sFuel);
+    layout->addWidget(fuelStatus);
+    layout->addWidget(Session::Forge::br(false));
+    layout->addWidget(tCabin);
+    layout->addWidget(cabinTempStatus);
+    layout->addWidget(Session::Forge::br(false));
+    layout->addWidget(vSpeed);
+    layout->addWidget(speedStatus);
+    layout->addWidget(Session::Forge::br(false));
+    layout->addWidget(RPM);
+    layout->addWidget(rpmStatus);
+    layout->addWidget(Session::Forge::br(false));
+    layout->addWidget(inReverse);
+    layout->addWidget(reverseStatus);
+    layout->addWidget(Session::Forge::br(false));
+}
 void VolvoS80::OpenTrunk()
 {
     if (DEBUG) {
@@ -203,6 +254,7 @@ void VolvoS80::MonitorReverse(QByteArray payload){
     if(REVERSE){
         this->arbiter->set_curr_page(2);
         REVERSE_TIMEOUT = millis() + 5000;
+        this->info->reverseStatus->setText("yes");
         if (DEBUG) {
 	        S80_LOG(info) << "in reverse";
 	    }
@@ -211,6 +263,7 @@ void VolvoS80::MonitorReverse(QByteArray payload){
         if(millis() > REVERSE_TIMEOUT){
             this->arbiter->set_curr_page(0);
             REVERSE_TIMEOUT = 0;
+            this->info->reverseStatus->setText("no");
             if (DEBUG) {
                 S80_LOG(info) << "not in reverse";
             }
