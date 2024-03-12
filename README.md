@@ -10,7 +10,6 @@ Current functionality:
 
 TODO:
 
-* Update lights and doors on the vehicle page
 * Change canbus id-s for gauges and exchange speed for boost
 * Integrate parking sensors
 * Integrate media buttons (seek and prev/next from the stock radio)
@@ -18,7 +17,6 @@ TODO:
 * Discover possibilities with the stock radio (display song progress, name and such on the screen)
 * Webasto heater control (preferably with a microcontroller to enable remote webasto controll over the internet while minimizing power usage but also integrating the control panel in dash)
 * Add wheel button combos (for example pressing cruise control- and vol- changes the page in Dash)
-* Send diag enable packets to enable the opening of windows, trunk, etc from dash
 
 Layout (currently they only interface with the Android Auto Page):
 

@@ -1,6 +1,7 @@
 #include "volvo_s80.hpp"
 #define DEBUG false
 #define PRINT_CAN_PAYLOADS false
+#define SHOW_VEHICLE_WIDGET false //no use for the vehicle page(too lazy to do anything with it) :))
 #include <chrono>
 unsigned long millis() {
     using namespace std::chrono;
@@ -17,10 +18,12 @@ bool VolvoS80::init(ICANBus* canbus)
 {
     if (this->arbiter) {
         this->aa_handler = this->arbiter->android_auto().handler;
-        this->vehicle = new Vehicle(*this->arbiter);
-        this->vehicle->setObjectName("Volvo S80");
-        this->vehicle->disable_sensors();
-        this->vehicle->rotate(270);
+        if (SHOW_VEHICLE_WIDGET == true){
+            this->vehicle = new Vehicle(*this->arbiter);
+            this->vehicle->setObjectName("Volvo S80");
+            this->vehicle->disable_sensors();
+            this->vehicle->rotate(270);
+        }
         this->actions = new ActionsWindow(*this->arbiter);
         this->actions->setObjectName("Actions");
         this->canbus = canbus;
@@ -53,7 +56,9 @@ bool VolvoS80::init(ICANBus* canbus)
 QList<QWidget *> VolvoS80::widgets()
 {
     QList<QWidget *> tabs;
-    tabs.append(this->vehicle);
+    if (SHOW_VEHICLE_WIDGET){
+        tabs.append(this->vehicle);
+    }
     tabs.append(this->actions);
     return tabs;
 }
