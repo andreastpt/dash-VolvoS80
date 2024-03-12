@@ -20,6 +20,7 @@ bool VolvoS80::init(ICANBus* canbus)
         this->actions->setObjectName("Actions");
         this->canbus = canbus;
         canbus->registerFrameHandler(0x404066, [this](QByteArray payload){this->controlls(payload);});
+        canbus->registerFrameHandler(0x01213FFC, [this](QByteArray payload){this->MonitorReverse(payload);});
         QPushButton* openTrunkButton = this->actions->findChild<QPushButton*>("Open Trunk");
         if (openTrunkButton) {
             connect(openTrunkButton, &QPushButton::clicked, this, [this](){this->OpenTrunk();});
@@ -184,4 +185,25 @@ void VolvoS80::GaugeSweep()
     this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CB51B20200000000")));
 
 }
-
+void VolvoS80::MonitorReverse(QByteArray payload){
+    if (DEBUG == true && PRINT_CAN_PAYLOADS == true) {
+        S80_LOG(info) << "Payload received Reverse: " << payload.toHex().toStdString();
+    }
+    REVERSE = (payload.at(2) >> 5) & 1;
+    if(REVERSE){
+        this->arbiter->set_curr_page(3);
+        REVERSE_TIMEOUT = millis() + 5000;
+        if (DEBUG) {
+	        S80_LOG(info) << "in reverse";
+	    }
+    }
+    else{
+        if(millis() > REVERSE_TIMEOUT){
+            this->arbiter->set_curr_page(0);
+            REVERSE_TIMEOUT = 0;
+            if (DEBUG) {
+                S80_LOG(info) << "not in reverse";
+            }
+        }
+    }
+}    
