@@ -1,5 +1,5 @@
 #include "volvo_s80.hpp"
-#define DEBUG true
+#define DEBUG false
 #define PRINT_CAN_PAYLOADS false
 #include <chrono>
 unsigned long millis() {
