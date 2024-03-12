@@ -1,5 +1,5 @@
 #include "volvo_s80.hpp"
-#define DEBUG false
+#define DEBUG true
 #define PRINT_CAN_PAYLOADS false
 VolvoS80::~VolvoS80()
 {
@@ -31,6 +31,10 @@ bool VolvoS80::init(ICANBus* canbus)
         QPushButton* closeWindowsButton = this->actions->findChild<QPushButton*>("Close Windows");
         if (closeWindowsButton) {
             connect(closeWindowsButton, &QPushButton::clicked, this, [this](){this->CloseWindows();});
+        }
+        QPushButton* sweepButton = this->actions->findChild<QPushButton*>("Gauge Sweep");
+        if (sweepButton) {
+            connect(sweepButton, &QPushButton::clicked, this, [this](){this->GaugeSweep();});
         } 
         S80_LOG(info)<<"loaded successfully";
         return true;
@@ -132,10 +136,13 @@ ActionsWindow::ActionsWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent
     openWindows->setObjectName("Open Windows");
     QPushButton *closeWindows = new QPushButton("Close Windows");
     closeWindows->setObjectName("Close Windows");
+    QPushButton *sweep = new QPushButton("Gauge Sweep");
+    sweep->setObjectName("Gauge Sweep");
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(openTrunk);
     layout->addWidget(openWindows);
     layout->addWidget(closeWindows);
+    layout->addWidget(sweep);
 }
 void VolvoS80::OpenTrunk()
 {
@@ -150,15 +157,31 @@ void VolvoS80::OpenWindows()
     if (DEBUG) {
         S80_LOG(info) << "Opening Windows";
     }
-    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204")));
-    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("8F40B11A21014001")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("4E00004001000000")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CE43B00901010100")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD43B01001030002")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CE43B00901010100")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD43B01001030010")));
 }
 void VolvoS80::CloseWindows()
 {
     if (DEBUG) {
         S80_LOG(info) << "Closing Windows";
     }
-    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204")));
-    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("8F40B11A21018000")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("4E00008000000000")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CE43B00901010100")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD43B01001030001")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CE43B00901010100")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD43B01001030008")));
+}
+void VolvoS80::GaugeSweep()
+{
+    if (DEBUG) {
+        S80_LOG(info) << "Gauge Sweep Started";
+    }
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CB51B20200000000")));
+
 }
 

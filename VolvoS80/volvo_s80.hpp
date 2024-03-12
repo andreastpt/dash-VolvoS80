@@ -33,6 +33,7 @@ class VolvoS80 : public QObject, VehiclePlugin
         void OpenTrunk();
         void OpenWindows();
         void CloseWindows();
+        void GaugeSweep();
         AAHandler *aa_handler;
         Vehicle *vehicle;
         ActionsWindow *actions;
