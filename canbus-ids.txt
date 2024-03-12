@@ -39,33 +39,35 @@ from: https://github.com/LuukEsselbrugge/Volve/blob/main/Volve/S60_02.cpp
         uint8_t d[] = {0xCB, 0x51, 0xB2, 0x02, 0x00, 0x00, 0x00, 0x00};
         can_tx(0x0FFFFE, d);
       }
+  //byte 7 diag1 commands
+REAR_R_OPEN = 0x01;
+  //byte 6 diag1 commands
+REAR_L_CLOSE = 0x20;
+REAR_L_OPEN =  0x40;
+REAR_R_CLOSE = 0x80;
+  //diag2 commands
+WINDOW_L_CLOSE = 0x01;
+WINDOW_L_OPEN = 0x02;
+WINDOW_R_CLOSE = 0x08;
+WINDOW_R_OPEN = 0x10;
 
-      void gong_on(){
-        uint8_t d[] = {0xCE, 0x51, 0xB0, 0x0B, 0x01, 0xFF, 0x20, 0x00};
-        can_tx(0x0FFFFE, d);
-      }
+//open all
+8F40B11A21014001
+4E00004001000000
+CE43B00901010100
+CD43B01001030002
+CE43B00901010100
+CD43B01001030010
 
-      void gong_off(){
-        uint8_t d[] = {0xCE, 0x51, 0xB0, 0x0B, 0x00, 0x00, 0x00, 0x00};
-        can_tx(0x0FFFFE, d);
-      }
+//close all
 
-      void indicate_left(){
-        uint8_t d[] = {0xCE, 0x48, 0xB0, 0x05, 0x01, 0x03, 0x02, 0x00};
-        can_tx(0x0FFFFE, d);
-      }
+8F40B11A21018000
+4E00008000000000
+CE43B00901010100
+CD43B01001030001
+CE43B00901010100
+CD43B01001030008
 
-      void indicate_right(){
-        uint8_t d[] = {0xCE, 0x48, 0xB0, 0x05, 0x01, 0x03, 0x01, 0x00};
-        can_tx(0x0FFFFE, d);
-      }
+//sweep
 
-      void indicate_stop(){
-        uint8_t d[] = {0xCE, 0x48, 0xB0, 0x05, 0x00, 0x00, 0x00, 0x00};
-        can_tx(0x0FFFFE, d);
-      }
-      
-      void disablelcd(){
-        uint8_t d[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0b000100};
-        this->can_tx(0x0220200E, d);
-      }
+CB51B20200000000

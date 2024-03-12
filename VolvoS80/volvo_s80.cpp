@@ -1,5 +1,5 @@
 #include "volvo_s80.hpp"
-#define DEBUG true
+#define DEBUG false
 #define PRINT_CAN_PAYLOADS false
 VolvoS80::~VolvoS80()
 {
@@ -18,13 +18,20 @@ bool VolvoS80::init(ICANBus* canbus)
         this->vehicle->rotate(270);
         this->actions = new ActionsWindow(*this->arbiter);
         this->actions->setObjectName("Actions");
+        this->canbus = canbus;
         canbus->registerFrameHandler(0x404066, [this](QByteArray payload){this->controlls(payload);});
         QPushButton* openTrunkButton = this->actions->findChild<QPushButton*>("Open Trunk");
         if (openTrunkButton) {
             connect(openTrunkButton, &QPushButton::clicked, this, [this](){this->OpenTrunk();});
-        } else {
-            S80_LOG(error) << "Open Trunk button not found!";
+        } 
+        QPushButton* openWindowsButton = this->actions->findChild<QPushButton*>("Open Windows");
+        if (openWindowsButton) {
+            connect(openWindowsButton, &QPushButton::clicked, this, [this](){this->OpenWindows();});
         }
+        QPushButton* closeWindowsButton = this->actions->findChild<QPushButton*>("Close Windows");
+        if (closeWindowsButton) {
+            connect(closeWindowsButton, &QPushButton::clicked, this, [this](){this->CloseWindows();});
+        } 
         S80_LOG(info)<<"loaded successfully";
         return true;
     }
@@ -121,8 +128,14 @@ ActionsWindow::ActionsWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent
 {
     QPushButton *openTrunk = new QPushButton("Open Trunk");
     openTrunk->setObjectName("Open Trunk");
+    QPushButton *openWindows = new QPushButton("Open Windows");
+    openWindows->setObjectName("Open Windows");
+    QPushButton *closeWindows = new QPushButton("Close Windows");
+    closeWindows->setObjectName("Close Windows");
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(openTrunk);
+    layout->addWidget(openWindows);
+    layout->addWidget(closeWindows);
 }
 void VolvoS80::OpenTrunk()
 {
@@ -132,3 +145,20 @@ void VolvoS80::OpenTrunk()
     this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204")));
     this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000")));
 }
+void VolvoS80::OpenWindows()
+{
+    if (DEBUG) {
+        S80_LOG(info) << "Opening Windows";
+    }
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000")));
+}
+void VolvoS80::CloseWindows()
+{
+    if (DEBUG) {
+        S80_LOG(info) << "Closing Windows";
+    }
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CF46B16F51010204")));
+    this->canbus->writeFrame(QCanBusFrame(0x0FFFFE, QByteArray::fromHex("CD46B16F51000000")));
+}
+

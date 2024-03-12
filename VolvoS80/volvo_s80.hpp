@@ -27,11 +27,12 @@ class VolvoS80 : public QObject, VehiclePlugin
         ~VolvoS80();
         bool init(ICANBus* canbus) override;
         QList<QWidget *> widgets() override;
-    public slots:
-        void OpenTrunk();
     private:
         ICANBus* canbus;
         void controlls(QByteArray payload);
+        void OpenTrunk();
+        void OpenWindows();
+        void CloseWindows();
         AAHandler *aa_handler;
         Vehicle *vehicle;
         ActionsWindow *actions;
