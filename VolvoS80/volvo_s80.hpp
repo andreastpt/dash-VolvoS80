@@ -1,5 +1,6 @@
 #include <QString>
 #include <iostream>
+#include <QWidget>
 #include <stdlib.h>
 #include <QByteArray>
 #include <boost/log/trivial.hpp>
@@ -11,11 +12,10 @@
 
 #define S80_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[S80VehiclePlugin] "
 
-class DebugWindow : public QWidget {
+class ActionsWindow : public QWidget {
     Q_OBJECT
-
     public:
-        DebugWindow(Arbiter &arbiter, QWidget *parent = nullptr);
+        ActionsWindow(Arbiter &arbiter, QWidget *parent = nullptr);
 };
 class VolvoS80 : public QObject, VehiclePlugin
 {
@@ -27,9 +27,18 @@ class VolvoS80 : public QObject, VehiclePlugin
         ~VolvoS80();
         bool init(ICANBus* canbus) override;
         QList<QWidget *> widgets() override;
+        int REVERSE = 0;
     private:
+        int REVERSE_TIMEOUT = 0;
+        bool inReverse = false;
+        ICANBus* canbus;
         void controlls(QByteArray payload);
+        void MonitorReverse(QByteArray payload);
+        void OpenTrunk();
+        void OpenWindows();
+        void CloseWindows();
+        void GaugeSweep();
         AAHandler *aa_handler;
         Vehicle *vehicle;
-        DebugWindow *debug;
+        ActionsWindow *actions;
 };
