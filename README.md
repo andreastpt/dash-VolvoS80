@@ -5,12 +5,13 @@ This repo contains a Vehicle Plugin for [Dash](https://github.com/OpenDsh/dash/)
 Current functionality:
 
 * Use steering wheel buttons in Android Auto
-* Button page for Trunk, open/close all windows and a gauge sweep
-* Automatic switching to reverse camera when reverse gear is engaged
+* Button page for Trunk, open/close all windows (currently only front passenger window does anything lmao)
+and a gauge sweep
 
 TODO:
 
 * Change canbus id-s for gauges and exchange speed for boost
+* Automatic switching to reverse camera when reverse gear is engaged
 * Integrate parking sensors
 * Integrate media buttons (seek and prev/next from the stock radio)
 * Discover possibilities with PHM (what codes does the phm keypad send out if any at all and how hard would it be to hijack its audio signal to use it as a phone with android auto)
