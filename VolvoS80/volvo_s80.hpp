@@ -40,6 +40,8 @@ class VolvoS80 : public QObject, VehiclePlugin
         QList<QWidget *> widgets() override;
         int REVERSE = 0;
         int RPM = 0;
+        int SPEED = 0;
+        void SendDiagnosticRequest();
     private:
         int REVERSE_TIMEOUT = 0;
         bool inReverse = false;
@@ -47,6 +49,7 @@ class VolvoS80 : public QObject, VehiclePlugin
         void controlls(QByteArray payload);
         void MonitorReverse(QByteArray payload);
         void MonitorRPM(QByteArray payload);
+        void diagResponse(QByteArray payload);
         void OpenTrunk();
         void OpenWindows();
         void CloseWindows();

@@ -40,7 +40,7 @@ from: https://github.com/LuukEsselbrugge/Volve/blob/main/Volve/S60_02.cpp
         can_tx(0x0FFFFE, d);
       }
   //byte 7 diag1 commands
-REAR_R_OPEN = 0x01;
+REAR_R_OPEN = 0x40;
   //byte 6 diag1 commands
 REAR_L_CLOSE = 0x20;
 REAR_L_OPEN =  0x40;
@@ -52,8 +52,8 @@ WINDOW_R_CLOSE = 0x08;
 WINDOW_R_OPEN = 0x10;
 
 //open all
-8F40B11A21014001
-4E00004001000000
+8F40B11A21014040
+4E00004040000000
 CE43B00901010100
 CD43B01001030002
 CE43B00901010100
