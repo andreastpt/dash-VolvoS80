@@ -1,7 +1,7 @@
 #include "volvo_s80.hpp"
 #define DEBUG false
 #define PRINT_CAN_PAYLOADS false
-#define SHOW_VEHICLE_WIDGET false //no use for the vehicle page(too lazy to do anything with it) :))
+#define SHOW_VEHICLE_WIDGET true
 #include <chrono>
 unsigned long millis() {
     using namespace std::chrono;
@@ -33,7 +33,7 @@ bool VolvoS80::init(ICANBus* canbus)
         this->canbus = canbus;
         canbus->registerFrameHandler(0x404066, [this](QByteArray payload){this->controlls(payload);});
         canbus->registerFrameHandler(0x012177FC, [this](QByteArray payload){this->MonitorReverse(payload);});
-        canbus->registerFrameHandler(0x02C13428, [this](QByteArray payload){this->MonitorRPM(payload);});
+        canbus->registerFrameHandler(0x02A07428, [this](QByteArray payload){this->MonitorRPM(payload);});
         canbus->registerFrameHandler(0x00800003, [this](QByteArray payload){this->diagResponse(payload);});
         QPushButton* openTrunkButton = this->actions->findChild<QPushButton*>("Open Trunk");
         if (openTrunkButton) {
@@ -92,70 +92,70 @@ void VolvoS80::controlls(QByteArray payload){
     if (DEBUG == true && PRINT_CAN_PAYLOADS == true) {
         S80_LOG(info) << "Payload received: " << payload.toHex().toStdString();
     }
-    if(payload.at(6) == 0x48 && currentTime - lastButtonPressTime > 200){
+    if(payload.at(6) == 0x48 && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::UP);
         lastButtonPressTime = currentTime;
 	    if (DEBUG) {
 		S80_LOG(info) << "UP Pressed";
 	    }
     }
-    else if(payload.at(6) == 0x44 && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(6) == 0x44 && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::DOWN);
         lastButtonPressTime = currentTime;
 	if (DEBUG) {
 		S80_LOG(info) << "DOWN Pressed";
 	}
     }
-    else if(payload.at(6) == 0x41 && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(6) == 0x41 && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::LEFT);
         lastButtonPressTime = currentTime;
         if (DEBUG) {
 		S80_LOG(info) << "LEFT Pressed";
 	}
     }
-    else if(payload.at(6) == 0x42 && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(6) == 0x42 && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::RIGHT);
         lastButtonPressTime = currentTime;
         if (DEBUG) {
 		S80_LOG(info) << "RIGHT Pressed";
 	}
     }
-    else if(payload.at(6) == 0x50 && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(6) == 0x50 && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::BACK);
         lastButtonPressTime = currentTime;
         if (DEBUG) {
 		S80_LOG(info) << "BACK Pressed";
 	}
     }
-    else if(payload.at(6) == 0x60 && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(6) == 0x60 && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::ENTER);
         lastButtonPressTime = currentTime;
         if (DEBUG) {
 		S80_LOG(info) << "ENTER Pressed";
 	}
     }
-    else if(payload.at(7) == 0x6F && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(7) == 0x6F && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::TOGGLE_PLAY);
         lastButtonPressTime = currentTime;
         if (DEBUG) {
 		S80_LOG(info) << "PLAY/PAUSE Pressed";
 	}
     }
-    else if(payload.at(7) == 0x5F && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(7) == 0x5F && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::CALL_END);
         lastButtonPressTime = currentTime;
         if (DEBUG) {
 		S80_LOG(info) << "CALL_END Pressed";
 	}
     }
-    else if(payload.at(7) == 0x7D && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(7) == 0x7D && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::NEXT);
         lastButtonPressTime = currentTime;
         if (DEBUG) {
 		S80_LOG(info) << "NEXT Pressed";
 	}
     }
-    else if(payload.at(7) == 0x7E && currentTime - lastButtonPressTime > 200){
+    else if(payload.at(7) == 0x7E && currentTime - lastButtonPressTime > 300){
         this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::PREV);
         lastButtonPressTime = currentTime;
         if (DEBUG) {
@@ -277,6 +277,16 @@ void VolvoS80::MonitorReverse(QByteArray payload){
     SPEED = (A << 8 | payload.at(7)) / 4;
     REVERSE = (payload.at(2) >> 5) & 1;
     this->info->speedStatus->setText(QString::number(SPEED));
+    if(SHOW_VEHICLE_WIDGET){
+        bool rrDoorUpdate = (payload.at(5) == 0x08) & 1;
+        bool rlDoorUpdate = (payload.at(5) == 0x04) & 1;
+        bool frDoorUpdate = (payload.at(5) == 0x02) & 1;
+        bool flDoorUpdate = (payload.at(5) == 0x01) & 1;
+        this->vehicle->door(Position::BACK_RIGHT, rrDoorUpdate);
+        this->vehicle->door(Position::BACK_LEFT, rlDoorUpdate);
+        this->vehicle->door(Position::FRONT_RIGHT, frDoorUpdate);
+        this->vehicle->door(Position::FRONT_LEFT, flDoorUpdate);
+    }
     if(REVERSE){
 	    if(!DEBUG) {
         	this->arbiter->set_curr_page(3);

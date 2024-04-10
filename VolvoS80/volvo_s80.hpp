@@ -45,6 +45,10 @@ class VolvoS80 : public QObject, VehiclePlugin
     private:
         int REVERSE_TIMEOUT = 0;
         bool inReverse = false;
+        bool frDoor = false;
+        bool flDoor = false;
+        bool rrDoor = false;
+        bool rlDoor = false;
         ICANBus* canbus;
         void controlls(QByteArray payload);
         void MonitorReverse(QByteArray payload);

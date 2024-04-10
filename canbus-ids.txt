@@ -80,3 +80,16 @@ doors status
 012177FC | C1 02 40 00 10 00 B8 00 ..@.....
 trunk 10 , fr door 02, fl door 01, rl 04, rr 08
 C1 02 40 00 10 xx
+
+
+02A07428 | 09 0C 01 0C 0F FD 22 C0
+
+rpm last 2
+22 BC = around 700rpm
+
+
+light stats 
+00617FF8 | CB BF E5 11 C0 80 C0 03 ........
+5byte
+0x80 main beam, 0x40 park, 0x20 off
+
